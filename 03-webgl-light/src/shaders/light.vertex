@@ -1,0 +1,33 @@
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aUV;
+
+uniform mat4 uModelViewMatrix;
+uniform mat3 uNormalMatrix;
+
+uniform bool uUseLighting;
+uniform vec3 uAmbientColor;
+uniform vec3 uDirectionalColor;
+uniform vec3 uLightingDirection;
+
+varying vec3 vLightWeighting;
+varying vec2 vUV;
+
+void main(void){
+
+  gl_Position = uModelViewMatrix * vec4(aPosition, 1.0);
+  vUV = aUV;
+
+  if(!uUseLighting){ 
+    
+    vLightWeighting = vec3(1.0,1.0,1.0);
+  
+  }else{
+
+    vec3 transformedNormal = normalize(uNormalMatrix * aNormal);
+    float directionalLightWeighting = max(dot(transformedNormal, uLightingDirection),0.0);
+    
+    vLightWeighting = uAmbientColor + uDirectionalColor * directionalLightWeighting;
+
+  }
+}
